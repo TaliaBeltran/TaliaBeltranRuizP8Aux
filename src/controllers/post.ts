@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Post, { IPost } from '../models/post';
-//import user from '../models/user';
+import image, {IImage} from '../models/image';
 
 class PostControllers {
   public async index(req: Request, res: Response) {
@@ -23,6 +23,20 @@ class PostControllers {
     const { id } = req.params;
     const dPost = await Post.findByIdAndDelete(id);
     res.json({ message: "Post delete", dPost });
+  }
+  public async createimg (request: Request, response: Response) {
+    const {idP} = request.params;
+    const {idI} = request.params;
+    let createI = await Post.findById(idP);
+    let imgI = await image.findById(idI);
+    if (createI != null && imgI != null){
+        const{title, url, content} = request.body;
+        const newI = new Post(request.body);
+        newI ["image"] = imgI.relativepath;
+        await newI.save();
+        response.status(300).json({message: "imagen asignado a Post", newI});
+    }
+    
   }
 }
 

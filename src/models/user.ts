@@ -1,5 +1,5 @@
 import { Schema, Document, model } from "mongoose";
-import bcrypt from "bcrypt";
+import post, {IPost} from "./post";
 
 export interface IUser extends Document {
   fullname: string;
@@ -7,8 +7,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   deteReg: Date;
-  encryptPassword(password: string):any;
-  machPassword(password: string):any;
+  post: Array<IPost>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -32,14 +31,9 @@ dateReg: {
   type: Date,
   default: Date.now(),
 },
+post: {
+  type: [post.schema]
+},
 });
 
-userSchema.methods.encryptPassword = async (password: string) =>{
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
-userSchema.methods.machPassword = async function (password: string){
-  return await bcrypt.compare(password, this.password);
-};
- 
-export default model<IUser>("User", userSchema);
+export default model<IUser>("user", userSchema);
